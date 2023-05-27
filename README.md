@@ -1,4 +1,4 @@
-# ChatGPT-like SSE Demo
+# ChatGPT Clone SSE Demo
 
 This project is mean't to be a demo of how ChatGPT receives messages and returns streams back to the client.
 

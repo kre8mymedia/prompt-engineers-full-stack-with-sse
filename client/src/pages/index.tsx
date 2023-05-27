@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 // import './App.css';
 
 const App: React.FC = () => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const [message, setMessage] = useState<string>('');
   const [chat, setChat] = useState<string[]>([]);
 
@@ -26,6 +27,9 @@ const App: React.FC = () => {
     try {
       await axios.post('http://localhost:8000/api/v1/message', { message, chat });
       setMessage('');
+      if (inputRef) {
+        inputRef.current?.focus();
+      }
     } catch (err) {
       console.error(err);
     }
@@ -33,14 +37,15 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <h1>ChatGPT-like App</h1>
+      <h1>ChatGPT Clone</h1>
       <div className="chat-box">
         {chat.map((msg, index) => (
-          <p key={index}>{msg}</p>
+          checkIndex(index, msg)
         ))}
       </div>
       <form onSubmit={sendMessage}>
         <input
+          ref={inputRef}
           type="text"
           placeholder="Type your message"
           value={message}
@@ -51,5 +56,13 @@ const App: React.FC = () => {
     </div>
   );
 };
+
+function checkIndex(index: number, msg: string) {
+  if (index % 2 === 0) {
+    return <p key={index}>Human: {msg}</p>
+  } else {
+    return <p key={index}>Assistant: {msg}</p>
+  }
+}
 
 export default App;

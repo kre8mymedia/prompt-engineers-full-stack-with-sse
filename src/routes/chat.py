@@ -2,10 +2,13 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 from langchain import OpenAI, LLMChain, PromptTemplate
+from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferWindowMemory
+from src.utils import count_tokens
 
 ## Modules
 from src.config import OPENAI_API_KEY
+from src.utils.logging import logger
 from src.utils.streaming import stream_generator
 
 template = """Assistant is a large language model trained by OpenAI.
@@ -26,7 +29,10 @@ prompt = PromptTemplate(
 )
 
 chatgpt_chain = LLMChain(
-    llm=OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY),
+    llm=ChatOpenAI(
+        temperature=0,
+        # model_name='text-davinci-002-render-sha',
+        openai_api_key=OPENAI_API_KEY),
     prompt=prompt,
     verbose=True,
     memory=ConversationBufferWindowMemory(k=2),
@@ -42,8 +48,9 @@ async def stream(request: Request):
 async def post_message(request: Request):
     data = await request.json()
     message = data.get("message", "")
-    result = chatgpt_chain.predict(human_input=message)
-    print(result)
+    result = count_tokens(chatgpt_chain, message)
+    logger.info(result)
     for queue in request.state.connections.values():
-        await queue.put(result)
+        await queue.put(message)
+        await queue.put(result.get("result", ""))
         
