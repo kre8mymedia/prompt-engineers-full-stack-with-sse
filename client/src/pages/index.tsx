@@ -7,7 +7,7 @@ const App: React.FC = () => {
   const [chat, setChat] = useState<string[]>([]);
 
   useEffect(() => {
-    const eventSource = new EventSource('http://localhost:8000/stream');
+    const eventSource = new EventSource('http://localhost:8000/api/v1/stream');
 
     eventSource.onmessage = (e: MessageEvent) => {
       setChat((prevChat) => [...prevChat, e.data]);
@@ -24,7 +24,7 @@ const App: React.FC = () => {
     if (message === '') return;
 
     try {
-      await axios.post('http://localhost:8000/message', { message });
+      await axios.post('http://localhost:8000/api/v1/message', { message });
       setMessage('');
     } catch (err) {
       console.error(err);
