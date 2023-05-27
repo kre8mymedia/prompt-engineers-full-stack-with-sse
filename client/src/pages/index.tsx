@@ -24,7 +24,7 @@ const App: React.FC = () => {
     if (message === '') return;
 
     try {
-      await axios.post('http://localhost:8000/api/v1/message', { message });
+      await axios.post('http://localhost:8000/api/v1/message', { message, chat });
       setMessage('');
     } catch (err) {
       console.error(err);
