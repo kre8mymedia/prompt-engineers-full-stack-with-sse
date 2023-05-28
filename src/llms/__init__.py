@@ -2,7 +2,7 @@
 from langchain import OpenAI
 from langchain.chat_models import ChatOpenAI
 
-class LLM:
+class LLM: # pylint: disable=too-few-public-methods
     """LLM Service"""
     def __init__(self, _token):
         self.token = _token

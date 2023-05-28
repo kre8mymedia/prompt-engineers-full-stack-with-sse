@@ -1,11 +1,10 @@
 """Returns Instance of ChatGPT Clone"""
+
+from langchain import LLMChain
 from langchain.memory import ConversationBufferWindowMemory
-from langchain import LLMChain, PromptTemplate
 ## Modules
 from src.llms import LLM
-
-## Modules
-from src.prompts.chat import CHAT_GPT_TEMPLATE
+from src.prompts.chat import CHAT_GPT_PROMPT
 
 class ChatGptChain:  # pylint: disable=too-few-public-methods
     """Returns Instance of ChatGPT Clone"""
@@ -15,16 +14,13 @@ class ChatGptChain:  # pylint: disable=too-few-public-methods
     def retrieve(
         self,
         temperature: float = 0,
-        verbose: bool = False
+        verbose: bool = False,
+        memory_k: int = 2,
     ):
-        prompt = PromptTemplate(
-            input_variables=["history", "human_input"],
-            template=CHAT_GPT_TEMPLATE
-        )
         chain = LLMChain(
             llm=LLM(self.token).model_select(temperature=temperature),
-            prompt=prompt,
+            prompt=CHAT_GPT_PROMPT,
             verbose=verbose,
-            memory=ConversationBufferWindowMemory(k=2),
+            memory=ConversationBufferWindowMemory(k=memory_k),
         )
         return chain
