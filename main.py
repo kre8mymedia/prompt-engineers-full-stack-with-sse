@@ -1,21 +1,26 @@
 """Application entrypoint"""
 import os
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+
 ## Modules
-from src.config import APP_ENV
+from src.utils.logging import logger
+from src.models.status import StatusResponse
+from src.config import APP_ENV, APP_VERSION, APP_NAME
 from src.middleware.streaming import ConnectionMiddleware
 ## Routes
 from src.routes.chat import router as chat_routes
 
 app = FastAPI(
-    title='Test Chat',
-    version='v0.0.1'
+    title=APP_NAME,
+    version=APP_VERSION
 )
 
-# Enable CORS to allow requests from different origins
+#######################################################################
+## Middleware
+#######################################################################
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,9 +29,26 @@ app.add_middleware(
 )
 app.add_middleware(ConnectionMiddleware)
 
-## Routing
+#######################################################################
+## Routes
+#######################################################################
 app.include_router(chat_routes, prefix="/api/v1")
 
+#######################################################################
+###  Check App Status
+#######################################################################
+@app.get("/status", tags=["Status"], response_model=StatusResponse)
+async def get_application_version():
+    try:
+        if APP_VERSION:
+            return {"version": APP_VERSION}
+    except Exception as err:
+        logger.exception(err)
+        raise HTTPException(status_code=500, detail=str(err)) from err
+
+#######################################################################
+###  Pages
+#######################################################################
 @app.get("/")
 def read_root():
     """Root route"""
