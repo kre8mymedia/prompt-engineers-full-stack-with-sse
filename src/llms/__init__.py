@@ -1,6 +1,8 @@
 """Models Select"""
 from langchain import OpenAI
 from langchain.chat_models import ChatOpenAI
+from langchain.callbacks.base import BaseCallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 class LLM: # pylint: disable=too-few-public-methods
     """LLM Service"""
@@ -18,11 +20,14 @@ class LLM: # pylint: disable=too-few-public-methods
                 temperature=temperature,
                 model_name=model_name,
                 streaming=streaming,
-                openai_api_key=self.token)
+                callbacks=[StreamingStdOutCallbackHandler()],
+                openai_api_key=self.token
+            )
 
         return OpenAI(
             temperature=temperature,
             model_name=model_name,
             streaming=streaming,
-            openai_api_key=self.token)
+            openai_api_key=self.token
+        )
     
