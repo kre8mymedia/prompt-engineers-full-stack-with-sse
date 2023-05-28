@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  web:
+    env_file:
+      - ./.env
+    command: uvicorn main:app --host 0.0.0.0 --reload
+    volumes:
+      - ./:/app
+    ports:
+      - 8000:8000
+      - 5678:5678
+  # redis:
+  #     ports:
+  #       - 6379:6379
