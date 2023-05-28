@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-// import './App.css';
+
+const checkIndex = (index: number, msg: string) => {
+  if (index % 2 === 0) {
+    return <p key={index} style={{ margin: 0 }}><b>Human:</b> {msg}</p>
+  } else {
+    return <p key={index} style={{ margin: 0 }}><b>Assistant:</b> {msg}</p>
+  }
+}
 
 const App: React.FC = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -43,7 +50,7 @@ const App: React.FC = () => {
           checkIndex(index, msg)
         ))}
       </div>
-      <form onSubmit={sendMessage}>
+      <form onSubmit={sendMessage} style={{ marginTop: 10 }}>
         <input
           ref={inputRef}
           type="text"
@@ -56,13 +63,5 @@ const App: React.FC = () => {
     </div>
   );
 };
-
-function checkIndex(index: number, msg: string) {
-  if (index % 2 === 0) {
-    return <p key={index}>Human: {msg}</p>
-  } else {
-    return <p key={index}>Assistant: {msg}</p>
-  }
-}
 
 export default App;
