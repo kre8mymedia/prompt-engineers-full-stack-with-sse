@@ -10,6 +10,7 @@ from src.utils.logging import logger
 from src.models.status import StatusResponse
 from src.config import APP_ENV, APP_VERSION, APP_NAME
 from src.middleware.streaming import ConnectionMiddleware
+
 ## Routes
 from src.routes.chat import router as chat_routes
 
@@ -55,5 +56,5 @@ def read_root():
     return HTMLResponse(APP_ENV)
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)), log_level="debug")
     
