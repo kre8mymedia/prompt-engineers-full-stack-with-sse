@@ -49,7 +49,7 @@ async def get_application_version():
 #######################################################################
 ###  Pages
 #######################################################################
-@app.get("/")
+@app.get("/", include_in_schema=False)
 def read_root():
     """Root route"""
     return HTMLResponse(APP_ENV)
