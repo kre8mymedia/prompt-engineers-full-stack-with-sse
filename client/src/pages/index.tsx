@@ -13,8 +13,22 @@ const checkIndex = (index: number, msg: string) => {
 
 const App: React.FC = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [apiKey, setApiKey] = useState<string>('');
+  const [token, setToken] = useState<string>('');
   const [message, setMessage] = useState<string>('');
   const [chat, setChat] = useState<string[]>([]);
+
+  const getHeaders = (jwt: string, apiKey: string) => {
+    if (jwt) {
+      return {
+        "Authorization": `Bearer ${jwt}`
+      }
+    }
+
+    return {
+      "x-api-key": apiKey
+    }
+  }
 
   useEffect(() => {
     const eventSource = new EventSource(URL);
@@ -33,8 +47,16 @@ const App: React.FC = () => {
 
     if (message === '') return;
 
+    const headers = token || apiKey
+                    ? { headers: getHeaders(token, apiKey) } 
+                    : undefined
+
     try {
-      await axios.post(URL, { question: message, messages: chat });
+      await axios.post(
+        URL,
+        { question: message, messages: chat },
+        headers
+      );
       setMessage('');
       if (inputRef) {
         inputRef.current?.focus();
@@ -42,7 +64,7 @@ const App: React.FC = () => {
     } catch (err) {
       console.error(err);
     }
-  };
+};
 
   return (
     <div className="App">
@@ -62,6 +84,20 @@ const App: React.FC = () => {
         />
         <button type="submit">Send</button>
       </form>
+      <input
+          style={{ marginTop: '5px' }}
+          type="text"
+          placeholder="Enter JWT"
+          value={token}
+          onChange={(e) => setToken(e.target.value)}
+        /> JWT<br/>
+        <input
+          style={{ marginTop: '5px' }}
+          type="text"
+          placeholder="Enter Token"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+        /> Personal Access Token
     </div>
   );
 };
